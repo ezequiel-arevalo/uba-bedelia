@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Users, Upload, BarChart3, FileSpreadsheet } from 'lucide-react';
 import { Student, ClassSession } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -113,7 +113,7 @@ function App() {
       </div>
 
       {/* Main Content */}
-      <main className="py-4">
+      <main className="py-4 min-vh-100">
         {renderContent()}
       </main>
 
