@@ -1,43 +1,58 @@
 export interface Student {
   id: string;
-  firstName: string;
-  lastName: string;
-  studentId: string;
-  phone: string;
-  dni: string;
-  program: string;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  email: string;
+  diplomatura: string;
+  idEstudiante: string;
 }
 
 export interface AttendanceRecord {
   id: string;
+  studentId: string;
   studentName: string;
-  duration: number; // in minutes
+  date: string;
   present: boolean;
+  duration?: number;
 }
 
 export interface ClassSession {
   id: string;
   date: string;
   fileName: string;
+  diplomatura: string;
   attendanceRecords: AttendanceRecord[];
   totalStudents: number;
   presentStudents: number;
 }
 
-export interface StudentStatistics {
-  student: Student;
+export interface DiplomaturaConfig {
+  name: string;
   totalClasses: number;
-  attendances: number;
-  absences: number;
-  attendancePercentage: number;
-  status: 'Aprobado' | 'No Aprobado';
-  classDetails: {
-    classId: string;
-    date: string;
-    present: boolean;
-  }[];
 }
 
-export interface TeamsAttendanceRow {
-  [key: string]: string | number;
+export interface StudentWithAttendance extends Student {
+  attendedClasses: number;
+  totalClassesForDiplomatura: number;
+  attendancePercentage: number;
+  aprobado: boolean;
+}
+
+export interface Filters {
+  diplomatura: string | string[];
+  aprobado: string;
+  search: string;
+}
+
+export interface SortConfig {
+  key: 'idEstudiante' | 'aprobado' | null;
+  direction: 'asc' | 'desc';
+}
+
+export interface StudentStats {
+  totalStudents: number;
+  approvedStudents: number;
+  notApprovedStudents: number;
+  averageAttendance: number;
 }

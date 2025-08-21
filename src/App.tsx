@@ -1,131 +1,190 @@
 import { useState } from 'react';
-import { Users, Upload, BarChart3, FileSpreadsheet } from 'lucide-react';
-import { Student, ClassSession } from './types';
-import { useLocalStorage } from './hooks/useLocalStorage';
-import { StudentManagement } from './components/StudentManagement';
-import { AttendanceUpload } from './components/AttendanceUpload';
-import { StatisticsDashboard } from './components/StatisticsDashboard';
-
-type ActiveTab = 'students' | 'upload' | 'statistics';
+import { Plus, Upload, GraduationCap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { StatsCards } from './components/StatsCards';
+import { FiltersBar } from './components/FiltersBar';
+import { StudentsTable } from './components/StudentsTable';
+import { StudentModal } from './components/StudentModal';
+import { DeleteConfirmModal } from './components/DeleteConfirmModal';
+import { ImportDialog } from './components/ImportDialog';
+import { Pagination } from './components/Pagination';
+import { useStudentData } from './hooks/useStudentData';
+import { Student, Filters, StudentWithAttendance } from './types';
+import { toast } from 'sonner';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('students');
-  const [students, setStudents] = useLocalStorage<Student[]>('attendance-students', []);
-  const [classSessions, setClassSessions] = useLocalStorage<ClassSession[]>('attendance-classes', []);
+  const { students, classSessions, sortConfig, addStudent, updateStudent, deleteStudent, addClassSession, getFilteredAndSortedStudents, getStats, handleSort } = useStudentData();
 
-  const handleAddStudent = (studentData: Omit<Student, 'id'>) => {
-    const newStudent: Student = {
-      ...studentData,
-      id: `student-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    };
-    setStudents(prev => [...prev, newStudent]);
+  const [filters, setFilters] = useState<Filters>({
+    diplomatura: 'all',
+    aprobado: 'all',
+    search: '',
+  });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [studentModalOpen, setStudentModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<StudentWithAttendance | undefined>();
+  const [deletingStudent, setDeletingStudent] = useState<StudentWithAttendance | null>(null);
+
+  const filteredStudents = getFilteredAndSortedStudents(filters);
+  const stats = getStats(filters);
+  
+  const totalPages = Math.ceil(filteredStudents.length / pageSize);
+  const paginatedStudents = filteredStudents.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handleFiltersChange = (newFilters: Filters) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
   };
 
-  const handleUpdateStudent = (id: string, studentData: Omit<Student, 'id'>) => {
-    setStudents(prev => prev.map(student => 
-      student.id === id ? { ...studentData, id } : student
-    ));
+  const handleClearFilters = () => {
+    setFilters({ diplomatura: 'all', aprobado: 'all', search: '' });
+    setCurrentPage(1);
   };
 
-  const handleDeleteStudent = (id: string) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este estudiante?')) {
-      setStudents(prev => prev.filter(student => student.id !== id));
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+  };
+
+  const handleEditStudent = (student: StudentWithAttendance) => {
+    setEditingStudent(student);
+    setStudentModalOpen(true);
+  };
+
+  const handleDeleteStudent = (studentId: string) => {
+    const student = filteredStudents.find(s => s.id === studentId);
+    if (student) {
+      setDeletingStudent(student);
+      setDeleteModalOpen(true);
     }
   };
 
-  const handleClassSessionAdded = (classSession: ClassSession) => {
-    setClassSessions(prev => [...prev, classSession]);
+  const confirmDeleteStudent = () => {
+    if (deletingStudent) {
+      deleteStudent(deletingStudent.id);
+      toast.success(`Estudiante ${deletingStudent.nombre} ${deletingStudent.apellido} eliminado correctamente`);
+      setDeletingStudent(null);
+      setDeleteModalOpen(false);
+    }
   };
 
-  const tabs = [
-    { id: 'students' as const, label: 'Alumnos', icon: Users, count: students.length },
-    { id: 'upload' as const, label: 'Cargar Asistencia', icon: Upload, count: classSessions.length },
-    { id: 'statistics' as const, label: 'Estadísticas', icon: BarChart3, count: null },
-  ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'students':
-        return (
-          <StudentManagement
-            students={students}
-            onAddStudent={handleAddStudent}
-            onUpdateStudent={handleUpdateStudent}
-            onDeleteStudent={handleDeleteStudent}
-          />
-        );
-      case 'upload':
-        return (
-          <AttendanceUpload
-            onClassSessionAdded={handleClassSessionAdded}
-            existingClasses={classSessions}
-          />
-        );
-      case 'statistics':
-        return (
-          <StatisticsDashboard
-            students={students}
-            classSessions={classSessions}
-          />
-        );
-      default:
-        return null;
+  const handleSaveStudent = (studentData: Omit<Student, 'id'>) => {
+    if (editingStudent) {
+      updateStudent(editingStudent.id, studentData);
+      toast.success('Estudiante actualizado correctamente');
+    } else {
+      addStudent(studentData);
+      toast.success('Estudiante agregado correctamente');
     }
+    setEditingStudent(undefined);
+  };
+
+  const handleStudentModalClose = (open: boolean) => {
+    setStudentModalOpen(open);
+    if (!open) {
+      setEditingStudent(undefined);
+    }
+  };
+
+  const handleImportSuccess = (classSession: any) => {
+    addClassSession(classSession);
+    toast.success(`Asistencia importada: ${classSession.presentStudents} estudiantes presentes`);
   };
 
   return (
-    <div className="min-vh-100 bg-light">
-      {/* Header */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow">
-        <div className="container-fluid">
-          <a className="navbar-brand d-flex align-items-center" href="#">
-            <FileSpreadsheet size={24} className="me-2" />
-            Sistema de Asistencia Teams
-          </a>
-          <div className="navbar-text text-light d-none d-md-block">
-            Gestión de Asistencia para Clases Virtuales
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="container mx-auto py-8 px-4 space-y-8">
+        {/* Header */}
+        <Card className="p-6 bg-white shadow-sm border-0">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                <GraduationCap className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Sistema de Gestión de Alumnos
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Gestión integral de estudiantes y control de asistencia
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button onClick={() => setImportDialogOpen(true)} variant="outline" className="gap-2">
+                <Upload className="h-4 w-4" />
+                Cargar Asistencia
+              </Button>
+              <Button onClick={() => setStudentModalOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Agregar Alumno
+              </Button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </Card>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white shadow-sm">
-        <div className="container-fluid">
-          <ul className="nav nav-tabs border-0 pt-3">
-            {tabs.map(tab => (
-              <li key={tab.id} className="nav-item">
-                <button
-                  className={`nav-link d-flex align-items-center ${
-                    activeTab === tab.id ? 'active' : ''
-                  }`}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  <tab.icon size={16} className="me-2" />
-                  {tab.label}
-                  {tab.count !== null && (
-                    <span className="badge bg-secondary ms-2">{tab.count}</span>
-                  )}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Stats Cards */}
+        <StatsCards stats={stats} />
+
+        {/* Filters */}
+        <FiltersBar
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+        />
+
+        {/* Students Table */}
+        <StudentsTable
+          students={paginatedStudents}
+          sortConfig={sortConfig}
+          onEditStudent={handleEditStudent}
+          onDeleteStudent={handleDeleteStudent}
+          onSort={handleSort}
+        />
+
+        {/* Pagination */}
+        {filteredStudents.length > 0 && (
+          <Card className="p-4">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalItems={filteredStudents.length}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </Card>
+        )}
+
+        {/* Modals */}
+        <StudentModal
+          open={studentModalOpen}
+          onOpenChange={handleStudentModalClose}
+          student={editingStudent}
+          onSave={handleSaveStudent}
+        />
+
+        <DeleteConfirmModal
+          open={deleteModalOpen}
+          onOpenChange={setDeleteModalOpen}
+          student={deletingStudent}
+          onConfirm={confirmDeleteStudent}
+        />
+
+        <ImportDialog
+          open={importDialogOpen}
+          onOpenChange={setImportDialogOpen}
+          onImportSuccess={handleImportSuccess}
+        />
       </div>
-
-      {/* Main Content */}
-      <main className="py-4 min-vh-100">
-        {renderContent()}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-top mt-auto py-3">
-        <div className="container-fluid">
-          <div className="text-center text-muted small">
-            Sistema de Gestión de Asistencia Microsoft Teams - 
-            Todos los datos se almacenan localmente en tu navegador
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
