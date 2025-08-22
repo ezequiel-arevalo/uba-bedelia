@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { utils, writeFile } from 'xlsx';
-import { Student, ClassSession, Diplomatura, StudentWithAttendance } from '../types';
+import { ClassSession, Diplomatura, StudentWithAttendance } from '../types';
 
 export interface ExportData {
   students: StudentWithAttendance[];
@@ -111,8 +112,13 @@ export const exportToExcel = (data: ExportData) => {
     utils.book_append_sheet(workbook, summarySheet, 'Resumen');
 
     // Generate filename with timestamp
-    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-    const filename = `sistema-gestion-estudiantes-${timestamp}.xlsx`;
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // +1 porque los meses van de 0 a 11
+    const year = now.getFullYear();
+
+    const timestamp = `${day}-${month}-${year}`;
+    const filename = `Backup-${timestamp}.xlsx`;
 
     // Save file
     writeFile(workbook, filename);

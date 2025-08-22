@@ -23,44 +23,20 @@ export const mockStudents: Student[] = [
 
 export const mockClassSessions: ClassSession[] = [
   {
-    id: 'class-1',
-    date: '2024-01-15',
-    fileName: 'tango_15_01_24.csv',
+    id: 'test',
+    date: '2024-02-29',
+    fileName: 'tango.csv',
     diplomatura: 'TANGO',
     attendanceRecords: [
       {
-        id: 'att-1',
-        studentId: '1',
-        studentName: 'maría gonzález',
-        date: '2024-01-15',
-        present: true
-      },
-      {
-        id: 'att-2',
-        studentId: '4',
-        studentName: 'luis fernández',
-        date: '2024-01-15',
-        present: true
-      }
-    ],
-    totalStudents: 2,
-    presentStudents: 2
-  },
-  {
-    id: 'class-2',
-    date: '2024-01-18',
-    fileName: 'folklore_18_01_24.csv',
-    diplomatura: 'TANGO',
-    attendanceRecords: [
-      {
-        id: 'att-3',
-        studentId: '2',
-        studentName: 'carlos rodríguez',
-        date: '2024-01-18',
+        id: '001',
+        studentId: '001',
+        studentName: 'Ezequiel Arevalo',
+        date: '2024-02-29',
         present: true
       }
     ],
     totalStudents: 1,
     presentStudents: 1
-  }
+  },
 ];

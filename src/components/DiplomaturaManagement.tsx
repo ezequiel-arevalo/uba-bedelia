@@ -133,7 +133,7 @@ export function DiplomaturaManagement({
           </TabsTrigger>
           <TabsTrigger value="files" className="gap-2">
             <FileText className="h-4 w-4" />
-            Archivos Subidos
+            Archivos
           </TabsTrigger>
         </TabsList>
 
