@@ -33,6 +33,10 @@ export function useStudentData() {
     setClassSessions([...classSessions, classSession]);
   };
 
+  const deleteClassSession = (id: string) => {
+    setClassSessions(classSessions.filter(session => session.id !== id));
+  };
+
   const addDiplomatura = (diplomaturaData: Omit<Diplomatura, 'id' | 'createdAt'>) => {
     const newDiplomatura: Diplomatura = {
       ...diplomaturaData,
@@ -178,6 +182,7 @@ export function useStudentData() {
     updateStudent,
     deleteStudent,
     addClassSession,
+    deleteClassSession,
     addDiplomatura,
     updateDiplomatura,
     deleteDiplomatura,

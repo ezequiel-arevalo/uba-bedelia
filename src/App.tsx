@@ -14,11 +14,28 @@ import { ImportDialog } from './components/ImportDialog';
 import { DiplomaturaManagement } from './components/DiplomaturaManagement';
 import { Pagination } from './components/Pagination';
 import { useStudentData } from './hooks/useStudentData';
+import { exportToExcel } from './lib/excelExporter';
 import { Student, Filters, StudentWithAttendance } from './types';
 import { toast } from 'sonner';
 
 function App() {
-  const { diplomaturas, sortConfig, addStudent, updateStudent, deleteStudent, addClassSession, addDiplomatura, updateDiplomatura, deleteDiplomatura, getStudentCountByDiplomatura, getFilteredAndSortedStudents, getStats, handleSort } = useStudentData();
+  const { 
+    diplomaturas, 
+    classSessions, 
+    sortConfig, 
+    addStudent, 
+    updateStudent, 
+    deleteStudent, 
+    addClassSession, 
+    deleteClassSession, 
+    addDiplomatura, 
+    updateDiplomatura, 
+    deleteDiplomatura, 
+    getStudentCountByDiplomatura, 
+    getFilteredAndSortedStudents, 
+    getStats, 
+    handleSort 
+  } = useStudentData();
 
   const [filters, setFilters] = useState<Filters>({
     diplomatura: 'all',
@@ -102,6 +119,21 @@ function App() {
   const handleImportSuccess = (classSession: any) => {
     addClassSession(classSession);
     toast.success(`Asistencia importada: ${classSession.presentStudents} estudiantes presentes`);
+  };
+
+  const handleExportData = () => {
+    const studentsWithAttendance = getFilteredAndSortedStudents({ diplomatura: 'all', aprobado: 'all', search: '' });
+    const result = exportToExcel({
+      students: studentsWithAttendance,
+      classSessions,
+      diplomaturas
+    });
+    
+    if (result.success) {
+      toast.success(`Datos exportados correctamente: ${result.filename}`);
+    } else {
+      toast.error(`Error al exportar: ${result.error}`);
+    }
   };
 
   // 👇 Config de header según tab activo
@@ -203,10 +235,13 @@ function App() {
           <TabsContent value="diplomaturas">
             <DiplomaturaManagement
               diplomaturas={diplomaturas}
+              classSessions={classSessions}
               onAddDiplomatura={addDiplomatura}
               onUpdateDiplomatura={updateDiplomatura}
               onDeleteDiplomatura={deleteDiplomatura}
+              onDeleteClassSession={deleteClassSession}
               getStudentCountByDiplomatura={getStudentCountByDiplomatura}
+              onExportData={handleExportData}
             />
           </TabsContent>
         </Tabs>

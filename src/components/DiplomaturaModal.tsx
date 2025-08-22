@@ -11,10 +11,11 @@ interface DiplomaturaModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   diplomatura?: Diplomatura;
+  existingNames: string[];
   onSave: (diplomatura: Omit<Diplomatura, 'id' | 'createdAt'>) => void;
 }
 
-export function DiplomaturaModal({ open, onOpenChange, diplomatura, onSave }: DiplomaturaModalProps) {
+export function DiplomaturaModal({ open, onOpenChange, diplomatura, existingNames, onSave }: DiplomaturaModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     totalClasses: 20,
@@ -41,6 +42,14 @@ export function DiplomaturaModal({ open, onOpenChange, diplomatura, onSave }: Di
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) newErrors.name = 'El nombre de la diplomatura es requerido';
+    
+    // Check for duplicate names (excluding current diplomatura when editing)
+    const isDuplicate = existingNames.some(name => 
+      name.toLowerCase() === formData.name.trim().toLowerCase() && 
+      (!diplomatura || name !== diplomatura.name)
+    );
+    if (isDuplicate) newErrors.name = 'Ya existe una diplomatura con este nombre';
+    
     if (formData.totalClasses < 1) newErrors.totalClasses = 'El número de clases debe ser mayor a 0';
     if (formData.totalClasses > 100) newErrors.totalClasses = 'El número de clases no puede ser mayor a 100';
 
@@ -53,7 +62,7 @@ export function DiplomaturaModal({ open, onOpenChange, diplomatura, onSave }: Di
     
     if (!validateForm()) return;
 
-    onSave(formData);
+    onSave({ ...formData, name: formData.name.trim() });
     onOpenChange(false);
   };
 
