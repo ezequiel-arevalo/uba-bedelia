@@ -18,21 +18,7 @@ import { Student, Filters, StudentWithAttendance } from './types';
 import { toast } from 'sonner';
 
 function App() {
-  const {
-    diplomaturas,
-    sortConfig,
-    addStudent,
-    updateStudent,
-    deleteStudent,
-    addClassSession,
-    addDiplomatura,
-    updateDiplomatura,
-    deleteDiplomatura,
-    getStudentCountByDiplomatura,
-    getFilteredAndSortedStudents,
-    getStats,
-    handleSort,
-  } = useStudentData();
+  const { diplomaturas, sortConfig, addStudent, updateStudent, deleteStudent, addClassSession, addDiplomatura, updateDiplomatura, deleteDiplomatura, getStudentCountByDiplomatura, getFilteredAndSortedStudents, getStats, handleSort } = useStudentData();
 
   const [filters, setFilters] = useState<Filters>({
     diplomatura: 'all',

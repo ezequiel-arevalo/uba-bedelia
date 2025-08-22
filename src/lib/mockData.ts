@@ -15,9 +15,9 @@ export const mockStudents: Student[] = [
     nombre: 'Ezequiel',
     apellido: 'Arevalo',
     telefono: '+54 11 1234-5678',
-    email: 'maria.gonzalez@email.com',
+    email: 'ezequiel.arevalo@economicas.com',
     diplomatura: 'TANGO',
-    idEstudiante: 'EST001'
+    idEstudiante: '001'
   },
 ];
 
