@@ -102,28 +102,34 @@ export function DiplomaturaManagement({
     <div className="space-y-6">
       {/* Search and Export */}
       <Card>
-        <CardContent className="pt-6 flex flex-row justify-between items-center">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar diplomaturas..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="flex gap-3">
-            <Button onClick={onExportData} variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar Excel
-            </Button>
-            <Button onClick={() => setModalOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nueva Diplomatura
-            </Button>
+        <CardContent className="pt-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Search */}
+            <div className="relative w-full sm:w-1/3">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar diplomaturas..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-full"
+              />
+            </div>
+
+            {/* Botones */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Button onClick={onExportData} variant="outline" className="gap-2 w-full sm:w-auto" >
+                <Download className="h-4 w-4" />
+                Exportar Excel
+              </Button>
+              <Button onClick={() => setModalOpen(true)} className="gap-2 w-full sm:w-auto" >
+                <Plus className="h-4 w-4" />
+                Nueva Diplomatura
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
+
 
       <Tabs defaultValue="diplomaturas" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
@@ -140,100 +146,100 @@ export function DiplomaturaManagement({
         <TabsContent value="diplomaturas">
           {/* Diplomaturas Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredDiplomaturas.length === 0 ? (
-          <Card className="col-span-full">
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  {searchTerm ? 'No se encontraron diplomaturas' : 'No hay diplomaturas registradas'}
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  {searchTerm 
-                    ? 'Intenta con otros términos de búsqueda'
-                    : 'Comienza creando tu primera diplomatura'
-                  }
-                </p>
-                {!searchTerm && (
-                  <Button onClick={() => setModalOpen(true)} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Crear Primera Diplomatura
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredDiplomaturas.map((diplomatura) => {
-            const studentCount = getStudentCountByDiplomatura(diplomatura.name);
-            const minClassesRequired = Math.ceil(diplomatura.totalClasses * 0.75);
-            
-            return (
-              <Card key={diplomatura.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-100 rounded-lg">
-                        <BookOpen className="h-5 w-5 text-purple-600" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{diplomatura.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          Creada el {new Date(diplomatura.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(diplomatura)}
-                      >
-                        <Edit className="h-4 w-4" />
+            {filteredDiplomaturas.length === 0 ? (
+              <Card className="col-span-full">
+                <CardContent className="pt-6">
+                  <div className="text-center py-12">
+                    <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">
+                      {searchTerm ? 'No se encontraron diplomaturas' : 'No hay diplomaturas registradas'}
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      {searchTerm
+                        ? 'Intenta con otros términos de búsqueda'
+                        : 'Comienza creando tu primera diplomatura'
+                      }
+                    </p>
+                    {!searchTerm && (
+                      <Button onClick={() => setModalOpen(true)} className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        Crear Primera Diplomatura
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(diplomatura)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {diplomatura.totalClasses}
-                      </div>
-                      <div className="text-sm text-blue-600">Total Clases</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">
-                        {minClassesRequired}
-                      </div>
-                      <div className="text-sm text-green-600">Mín. Aprobar</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
-                        {studentCount} estudiante{studentCount !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <Badge variant="secondary">
-                      75% requerido
-                    </Badge>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            );
-          })
-        )}
+            ) : (
+              filteredDiplomaturas.map((diplomatura) => {
+                const studentCount = getStudentCountByDiplomatura(diplomatura.name);
+                const minClassesRequired = Math.ceil(diplomatura.totalClasses * 0.75);
+
+                return (
+                  <Card key={diplomatura.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-purple-100 rounded-lg">
+                            <BookOpen className="h-5 w-5 text-purple-600" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-lg">{diplomatura.name}</CardTitle>
+                            <p className="text-sm text-muted-foreground">
+                              Creada el {new Date(diplomatura.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(diplomatura)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(diplomatura)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center p-3 bg-blue-50 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {diplomatura.totalClasses}
+                          </div>
+                          <div className="text-sm text-blue-600">Total Clases</div>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 rounded-lg">
+                          <div className="text-2xl font-bold text-green-600">
+                            {minClassesRequired}
+                          </div>
+                          <div className="text-sm text-green-600">Mín. Aprobar</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">
+                            {studentCount} estudiante{studentCount !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        <Badge variant="secondary">
+                          75% requerido
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </TabsContent>
 
@@ -249,7 +255,7 @@ export function DiplomaturaManagement({
                       {searchTerm ? 'No se encontraron archivos' : 'No hay archivos subidos'}
                     </h3>
                     <p className="text-muted-foreground">
-                      {searchTerm 
+                      {searchTerm
                         ? 'Intenta con otros términos de búsqueda'
                         : 'Los archivos de asistencia aparecerán aquí una vez que los subas'
                       }
@@ -343,7 +349,7 @@ export function DiplomaturaManagement({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
@@ -382,7 +388,7 @@ export function DiplomaturaManagement({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDeleteSession}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >

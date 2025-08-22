@@ -188,12 +188,12 @@ function App() {
           {/* Contenido estudiantes */}
           <TabsContent value="students" className="space-y-8">
             <Card className="p-4">
-              <div className="flex gap-3 justify-end">
-                <Button onClick={() => setImportDialogOpen(true)} variant="outline" className="gap-2">
+              <div className="flex flex-col sm:flex-row-reverse gap-3 w-full sm:w-auto">
+                <Button onClick={() => setImportDialogOpen(true)} className="gap-2">
                   <Upload className="h-4 w-4" />
                   Importar CSV
                 </Button>
-                <Button onClick={() => setStudentModalOpen(true)} className="gap-2">
+                <Button onClick={() => setStudentModalOpen(true)} variant="outline" className="gap-2">
                   <Plus className="h-4 w-4" />
                   Agregar Alumno
                 </Button>
