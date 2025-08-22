@@ -135,3 +135,18 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* Quitar color de fondo amarillo/azul de autofill en Chrome */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important; /* <-- tu color de fondo */
+  -webkit-text-fill-color: #000 !important; /* <-- color del texto */
+  transition: background-color 5000s ease-in-out 0s;
+}

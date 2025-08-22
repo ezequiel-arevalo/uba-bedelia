@@ -3,25 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { 
-  Plus, 
-  GraduationCap, 
-  Edit, 
-  Trash2, 
-  Search,
-  Users,
-  BookOpen
-} from 'lucide-react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { Plus, GraduationCap, Edit, Trash2, Search,Users,BookOpen} from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from '@/components/ui/alert-dialog';
 import { DiplomaturaModal } from './DiplomaturaModal';
 import { Diplomatura } from '../types';
 
@@ -86,32 +69,9 @@ export function DiplomaturaManagement({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
-                <GraduationCap className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl">Gestión de Diplomaturas</CardTitle>
-                <p className="text-muted-foreground mt-1">
-                  Administra las diplomaturas y sus configuraciones de clases
-                </p>
-              </div>
-            </div>
-            <Button onClick={() => setModalOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nueva Diplomatura
-            </Button>
-          </div>
-        </CardHeader>
-      </Card>
-
       {/* Search */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-6 flex flex-row justify-between">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -120,6 +80,12 @@ export function DiplomaturaManagement({
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
+          </div>
+          <div>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Nueva Diplomatura
+            </Button>
           </div>
         </CardContent>
       </Card>

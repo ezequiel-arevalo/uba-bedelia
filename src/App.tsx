@@ -40,6 +40,7 @@ function App() {
     search: '',
   });
 
+  const [currentTab, setCurrentTab] = useState("students"); // 👈 nuevo estado
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [studentModalOpen, setStudentModalOpen] = useState(false);
@@ -50,7 +51,7 @@ function App() {
 
   const filteredStudents = getFilteredAndSortedStudents(filters);
   const stats = getStats(filters);
-  
+
   const totalPages = Math.ceil(filteredStudents.length / pageSize);
   const paginatedStudents = filteredStudents.slice(
     (currentPage - 1) * pageSize,
@@ -117,24 +118,38 @@ function App() {
     toast.success(`Asistencia importada: ${classSession.presentStudents} estudiantes presentes`);
   };
 
+  // 👇 Config de header según tab activo
+  const headerConfig = {
+    students: {
+      icon: <GraduationCap className="h-8 w-8 text-white" />,
+      title: "Sistema de Gestión de Alumnos",
+      subtitle: "Gestión integral de estudiantes y control de asistencia",
+      bg: "from-blue-500 to-blue-600",
+    },
+    diplomaturas: {
+      icon: <Settings className="h-8 w-8 text-white" />,
+      title: "Gestión de Diplomaturas",
+      subtitle: "Administra las diplomaturas y sus configuraciones de clases",
+      bg: "from-purple-500 to-purple-600",
+    }
+  };
+
+  const { icon, title, subtitle, bg } = headerConfig[currentTab as keyof typeof headerConfig];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="container mx-auto py-8 px-4 space-y-8">
-        <Tabs defaultValue="students" className="space-y-8">
-          {/* Header */}
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-8">
+          {/* Header dinámico */}
           <Card className="p-6 bg-white shadow-sm border-0">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                  <GraduationCap className="h-8 w-8 text-white" />
+                <div className={`p-3 bg-gradient-to-br ${bg} rounded-xl shadow-lg`}>
+                  {icon}
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">
-                    Sistema de Gestión de Alumnos
-                  </h1>
-                  <p className="text-gray-600 mt-1">
-                    Gestión integral de estudiantes y control de asistencia
-                  </p>
+                  <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
+                  <p className="text-gray-600 mt-1">{subtitle}</p>
                 </div>
               </div>
               <div className="flex gap-3">
@@ -152,8 +167,8 @@ function App() {
             </div>
           </Card>
 
+          {/* Contenido estudiantes */}
           <TabsContent value="students" className="space-y-8">
-            {/* Action Buttons */}
             <Card className="p-4">
               <div className="flex gap-3 justify-end">
                 <Button onClick={() => setImportDialogOpen(true)} variant="outline" className="gap-2">
@@ -167,10 +182,8 @@ function App() {
               </div>
             </Card>
 
-            {/* Stats Cards */}
             <StatsCards stats={stats} />
 
-            {/* Filters */}
             <FiltersBar
               filters={filters}
               diplomaturas={diplomaturas}
@@ -178,7 +191,6 @@ function App() {
               onClearFilters={handleClearFilters}
             />
 
-            {/* Students Table */}
             <StudentsTable
               students={paginatedStudents}
               sortConfig={sortConfig}
@@ -187,7 +199,6 @@ function App() {
               onSort={handleSort}
             />
 
-            {/* Pagination */}
             {filteredStudents.length > 0 && (
               <Card className="p-4">
                 <Pagination
@@ -202,6 +213,7 @@ function App() {
             )}
           </TabsContent>
 
+          {/* Contenido diplomaturas */}
           <TabsContent value="diplomaturas">
             <DiplomaturaManagement
               diplomaturas={diplomaturas}
