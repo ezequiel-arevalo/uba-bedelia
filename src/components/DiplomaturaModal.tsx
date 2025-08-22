@@ -68,7 +68,7 @@ export function DiplomaturaModal({ open, onOpenChange, diplomatura, existingName
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-     <DialogContent aria-describedby={undefined} className="sm:max-w-[425px]">
+     <DialogContent aria-describedby={undefined} className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto [&>button]:border [&>button]:border-input [&>button]:bg-transparent [&>button]:hover:bg-accent [&>button]:hover:text-accent-foreground [&>button]:rounded-md [&>button]:p-2">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <GraduationCap className="h-5 w-5" />
