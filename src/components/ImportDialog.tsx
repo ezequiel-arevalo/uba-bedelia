@@ -7,16 +7,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Upload, FileText, AlertCircle, Calendar } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { processAttendanceFile } from '../lib/csvProcessor';
-import { ClassSession } from '../types';
-import { DIPLOMATURAS } from '../lib/mockData';
+import { ClassSession, Diplomatura } from '../types';
 
 interface ImportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  diplomaturas: Diplomatura[];
   onImportSuccess: (classSession: ClassSession) => void;
 }
 
-export function ImportDialog({ open, onOpenChange, onImportSuccess }: ImportDialogProps) {
+export function ImportDialog({ open, onOpenChange, diplomaturas, onImportSuccess }: ImportDialogProps) {
   const [file, setFile] = useState<File | null>(null);
   const [diplomatura, setDiplomatura] = useState('');
   const [classDate, setClassDate] = useState('');
@@ -122,9 +122,9 @@ export function ImportDialog({ open, onOpenChange, onImportSuccess }: ImportDial
                 <SelectValue placeholder="Seleccionar diplomatura" />
               </SelectTrigger>
               <SelectContent>
-                {DIPLOMATURAS.map((dip) => (
-                  <SelectItem key={dip} value={dip}>
-                    {dip}
+                {diplomaturas.map((dip) => (
+                  <SelectItem key={dip.id} value={dip.name}>
+                    {dip.name}
                   </SelectItem>
                 ))}
               </SelectContent>

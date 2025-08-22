@@ -3,16 +3,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Search, Filter, X } from 'lucide-react';
-import { Filters } from '../types';
-import { DIPLOMATURAS } from '../lib/mockData';
+import { Filters, Diplomatura } from '../types';
 
 interface FiltersBarProps {
   filters: Filters;
+  diplomaturas: Diplomatura[];
   onFiltersChange: (filters: Filters) => void;
   onClearFilters: () => void;
 }
 
-export function FiltersBar({ filters, onFiltersChange, onClearFilters }: FiltersBarProps) {
+export function FiltersBar({ filters, diplomaturas, onFiltersChange, onClearFilters }: FiltersBarProps) {
   const hasActiveFilters = 
     filters.diplomatura !== 'all' || 
     filters.aprobado !== 'all' || 
@@ -59,9 +59,9 @@ export function FiltersBar({ filters, onFiltersChange, onClearFilters }: Filters
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las diplomaturas</SelectItem>
-              {DIPLOMATURAS.map((diplomatura) => (
-                <SelectItem key={diplomatura} value={diplomatura}>
-                  {diplomatura}
+              {diplomaturas.map((diplomatura) => (
+                <SelectItem key={diplomatura.id} value={diplomatura.name}>
+                  {diplomatura.name}
                 </SelectItem>
               ))}
             </SelectContent>

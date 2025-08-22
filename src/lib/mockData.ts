@@ -1,16 +1,12 @@
-import { Student, ClassSession, DiplomaturaConfig } from '../types';
+import { Student, ClassSession, Diplomatura } from '../types';
 
-export const DIPLOMATURAS = [
-  'TANGO',
-  'PYMES',
-  'Oratoria'
-];
-
-// Configuration for total classes per diplomatura
-export const DIPLOMATURA_CONFIG: DiplomaturaConfig[] = [
-  { name: 'TANGO', totalClasses: 5 },
-  { name: 'PYMES', totalClasses: 5 },
-  { name: 'Oratoria', totalClasses: 5 },
+export const mockDiplomaturas: Diplomatura[] = [
+  { 
+    id: '1', 
+    name: 'TANGO', 
+    totalClasses: 20,
+    createdAt: '2024-01-01'
+  },
 ];
 
 export const mockStudents: Student[] = [

@@ -6,6 +6,7 @@ export interface Student {
   email: string;
   diplomatura: string;
   idEstudiante: string;
+  aprobado?: boolean;
 }
 
 export interface AttendanceRecord {
@@ -27,9 +28,11 @@ export interface ClassSession {
   presentStudents: number;
 }
 
-export interface DiplomaturaConfig {
+export interface Diplomatura {
+  id: string;
   name: string;
   totalClasses: number;
+  createdAt: string;
 }
 
 export interface StudentWithAttendance extends Student {

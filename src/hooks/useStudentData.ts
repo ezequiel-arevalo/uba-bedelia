@@ -1,11 +1,14 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { Student, ClassSession, Filters, SortConfig, StudentStats, StudentWithAttendance } from '../types';
-import { mockStudents, mockClassSessions, DIPLOMATURA_CONFIG } from '../lib/mockData';
+import { Student, ClassSession, Filters, SortConfig, StudentStats, StudentWithAttendance, Diplomatura } from '../types';
+import { mockStudents, mockClassSessions, mockDiplomaturas } from '../lib/mockData';
 import { useLocalStorage } from './useLocalStorage';
 
 export function useStudentData() {
   const [students, setStudents] = useLocalStorage<Student[]>('students-data', mockStudents);
   const [classSessions, setClassSessions] = useLocalStorage<ClassSession[]>('class-sessions', mockClassSessions);
+  const [diplomaturas, setDiplomaturas] = useLocalStorage<Diplomatura[]>('diplomaturas-data', mockDiplomaturas);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
 
   const addStudent = (studentData: Omit<Student, 'id'>) => {
@@ -30,10 +33,39 @@ export function useStudentData() {
     setClassSessions([...classSessions, classSession]);
   };
 
+  const addDiplomatura = (diplomaturaData: Omit<Diplomatura, 'id' | 'createdAt'>) => {
+    const newDiplomatura: Diplomatura = {
+      ...diplomaturaData,
+      id: `diplomatura-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    setDiplomaturas([...diplomaturas, newDiplomatura]);
+  };
+
+  const updateDiplomatura = (id: string, diplomaturaData: Omit<Diplomatura, 'id' | 'createdAt'>) => {
+    setDiplomaturas(diplomaturas.map(diplomatura => 
+      diplomatura.id === id ? { ...diplomatura, ...diplomaturaData } : diplomatura
+    ));
+  };
+
+  const deleteDiplomatura = (id: string) => {
+    const diplomatura = diplomaturas.find(d => d.id === id);
+    if (diplomatura) {
+      // Remove all students and class sessions for this diplomatura
+      setStudents(students.filter(student => student.diplomatura !== diplomatura.name));
+      setClassSessions(classSessions.filter(session => session.diplomatura !== diplomatura.name));
+      setDiplomaturas(diplomaturas.filter(d => d.id !== id));
+    }
+  };
+
+  const getStudentCountByDiplomatura = (diplomaturaName: string): number => {
+    return students.filter(student => student.diplomatura === diplomaturaName).length;
+  };
+
   const getStudentsWithAttendance = (): StudentWithAttendance[] => {
     return students.map(student => {
       // Get diplomatura configuration
-      const diplomaturaConfig = DIPLOMATURA_CONFIG.find(config => config.name === student.diplomatura);
+      const diplomaturaConfig = diplomaturas.find(config => config.name === student.diplomatura);
       const totalClassesForDiplomatura = diplomaturaConfig?.totalClasses || 20;
 
       // Count attended classes for this student
@@ -140,11 +172,16 @@ export function useStudentData() {
   return {
     students,
     classSessions,
+    diplomaturas,
     sortConfig,
     addStudent,
     updateStudent,
     deleteStudent,
     addClassSession,
+    addDiplomatura,
+    updateDiplomatura,
+    deleteDiplomatura,
+    getStudentCountByDiplomatura,
     getFilteredAndSortedStudents,
     getStats,
     handleSort,

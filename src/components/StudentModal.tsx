@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogClose, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { User, Phone, GraduationCap, X } from 'lucide-react';
-import { Student } from '../types';
-import { DIPLOMATURAS } from '../lib/mockData';
+import { User, Phone, GraduationCap } from 'lucide-react';
+import { Student, Diplomatura } from '../types';
 
 interface StudentModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   student?: Student;
+  diplomaturas: Diplomatura[];
   onSave: (student: Omit<Student, 'id'>) => void;
 }
 
-export function StudentModal({ open, onOpenChange, student, onSave }: StudentModalProps) {
+export function StudentModal({ open, onOpenChange, student, diplomaturas, onSave }: StudentModalProps) {
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -81,7 +81,7 @@ export function StudentModal({ open, onOpenChange, student, onSave }: StudentMod
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto [&>button]:border [&>button]:border-input [&>button]:bg-transparent [&>button]:hover:bg-accent [&>button]:hover:text-accent-foreground [&>button]:rounded-md [&>button]:p-2">
+     <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto [&>button]:border [&>button]:border-input [&>button]:bg-transparent [&>button]:hover:bg-accent [&>button]:hover:text-accent-foreground [&>button]:rounded-md [&>button]:p-2">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <User className="h-5 w-5" />
@@ -189,8 +189,8 @@ export function StudentModal({ open, onOpenChange, student, onSave }: StudentMod
                       <SelectValue placeholder="Seleccionar diplomatura" />
                     </SelectTrigger>
                     <SelectContent>
-                      {DIPLOMATURAS.map((d) => (
-                        <SelectItem key={d} value={d}>{d}</SelectItem>
+                      {diplomaturas.map((d) => (
+                        <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
